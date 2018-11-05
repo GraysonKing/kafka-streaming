@@ -7,15 +7,10 @@ services:
       - "2181:2181"
     networks:
       kafkanet:
-#        ipv4_address: 127.0.0.5
   kafka:
     image: wurstmeister/kafka:latest
     ports:
       - "9092:9092"
-#      - target: 9094
-#        published: 9094
-#        protocol: tcp
-#        mode: host
     hostname: kafka
     environment:
       HOSTNAME_COMMAND: "docker info | grep ^Name: | cut -d' ' -f 2"
@@ -29,18 +24,17 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       kafkanet:
-#        ipv4_address: 127.0.0.4
   webapp:
     image: gkin/kafka-streaming:latest
     depends_on:
       - "zookeeper"
       - "kafka"
     deploy:
-#      replicas: 5
-#      resources:
-#        limits:
-#          cpus: "0.1"
-#          memory: 50M
+      replicas: 5
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
       restart_policy:
         condition: on-failure
     ports:
@@ -50,11 +44,7 @@ services:
     networks:
       webnet:
       kafkanet:
-#        ipv4_address: 127.0.0.5
 networks:
   webnet:
   kafkanet:
     driver: overlay
-#    ipam:
-#      config:
-#        - subnet: 127.0.0.0/8

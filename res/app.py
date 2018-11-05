@@ -26,7 +26,9 @@ def chatstream():
                 chat_text = chat_json['chat_text']
                 chat_feed.append((chat_name, chat_text))
             #chat_feed.append(msg)
-            return chat_feed
+        for c in chat_feed:
+            print(chat_feed[0], chat_feed[1])
+        return chat_feed
     except:
         chat_feed.append(('SYSTEM', 'ERROR OCCURED'))    
     finally:
