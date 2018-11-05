@@ -1,4 +1,3 @@
 Flask
-Redis
 kafka-python
-numpy
+simplejson

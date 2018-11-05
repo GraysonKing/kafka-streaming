@@ -1,6 +1,4 @@
 import time
-import numpy as np
-import cv2
 import os
 from kafka import KafkaProducer
 
