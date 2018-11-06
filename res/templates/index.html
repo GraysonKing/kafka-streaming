@@ -6,15 +6,13 @@
       * {
         font-family: 'Roboto', sans-serif;   
       }
-      background {
-        color: gray;
-      }
       body {
         max-width: 75%;
         margin: auto;
       }
       .chat_input {
-        max-width: 50%;
+        max-width: 55%;
+        margin: auto;
       }
     </style>
   </head>
@@ -23,7 +21,10 @@
     <div id="chat">
       {% if chat_feed is not none %}
         {% for chat_block_info in chat_feed %}
+          {% if min_msgs < max_msgs %}
             <p><b> {{ chat_block_info[0] }} </b>: {{ chat_block_info[1] }} - <i> {{ chat_block_info[2] }} </i></p>
+            {% set min_msgs = min_msgs + 1 %}
+	  {% endif %}
         {% endfor %}
       {% endif %}
     </div>
@@ -31,7 +32,7 @@
       <form action="/chat_input" method="post">
         <input type="text" name="chat_name" placeholder="Name"> <br/>
         <textarea name="chat_text" placeholder="Enter a message..."></textarea> <br/>
-        <input type="submit" name ="chat_form" value="Submit"/>
+        <input type="submit" name ="chat_form" value="Post"/>
       </form>
     </div>
   </body>

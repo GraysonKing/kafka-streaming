@@ -6,17 +6,17 @@ from kafka import KafkaProducer, KafkaConsumer
 
 KAFKA_IP = os.environ['KAFKA_CLIENT_ADDRESS']
 topic = 'chat_feed'
-chat_feed = list()
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html', chat_feed=chatstream())
+    return render_template('index.html', chat_feed=chatstream(), min_msgs=0, max_msgs=10)
 
 # Read json from the broker and append to the feed array to be used in index.html
 def chatstream():
+    chat_feed = list()
     chat_json = list()
-    consumer = KafkaConsumer(topic, bootstrap_servers=KAFKA_IP, auto_offset_reset='earliest', group_id='chat_consumer', consumer_timeout_ms=10000)
+    consumer = KafkaConsumer(topic, bootstrap_servers=KAFKA_IP, auto_offset_reset='earliest', group_id=None, consumer_timeout_ms=10000)
     try:
         for msg in consumer:
             chat_json = json.loads(msg.value.decode('utf-8'))
