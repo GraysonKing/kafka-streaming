@@ -1,49 +1,46 @@
 import time
 import os
 import simplejson as json
-from flask import Flask, Response, render_template, request
+from flask import Flask, render_template, request
 from kafka import KafkaProducer, KafkaConsumer
 
-# Connecting to Kafka and assigning a topic
 KAFKA_IP = os.environ['KAFKA_CLIENT_ADDRESS']
 topic = 'chat_feed'
-
+chat_feed = list()
 app = Flask(__name__)
 
 @app.route('/')
 def index():
     return render_template('index.html', chat_feed=chatstream())
 
-# Read chat json and append to an array so it can be used in the html
+# Read json from the broker and append to the feed array to be used in index.html
 def chatstream():
-    chat_feed = list()
+    chat_json = list()
+    consumer = KafkaConsumer(topic, bootstrap_servers=KAFKA_IP, auto_offset_reset='earliest', group_id='chat_consumer', consumer_timeout_ms=10000)
     try:
-        consumer = KafkaConsumer(topic, bootstrap_servers=KAFKA_IP, auto_offset_reset='earliest', group_id='chat_consumer', consumer_timeout_ms=10000)
         for msg in consumer:
-            chat_json = json.loads(msg.decode('utf-8'))
+            chat_json = json.loads(msg.value.decode('utf-8'))
             if chat_json:
                 chat_name = chat_json['chat_name']
                 chat_text = chat_json['chat_text']
-                chat_feed.append((chat_name, chat_text))
-            #chat_feed.append(msg)
-        for c in chat_feed:
-            print(chat_feed[0], chat_feed[1])
+                chat_time = chat_json['chat_time']
+                chat_feed.append((chat_name, chat_text, chat_time))
         return chat_feed
-    except:
-        chat_feed.append(('SYSTEM', 'ERROR OCCURED'))    
     finally:
         consumer.close()
 
+# Requesting data from index.html to send to the broker
 @app.route('/chat_input', methods=['POST'])
 def chat_input():
+    producer = KafkaProducer(bootstrap_servers=KAFKA_IP)
     try:
-        producer = KafkaProducer(bootstrap_servers=KAFKA_IP)
         chat_name = request.form['chat_name']
         chat_text = request.form['chat_text']
-        #msg = '{"chat_name" : "%s", "chat_text" : "%s"}' % (chat_name, chat_text)
-        msg = 'test'
-        producer.send(topic, json.dumps(msg.encode('utf-8')))
-        #print producer.send(topic, b'some_message_bytes').get(timeout=30)
+        chat_time = time.strftime('%d/%m/%Y %H:%M')
+        if not chat_name:
+            chat_name = 'Anonymous'
+        msg_json = json.dumps({"chat_name" : chat_name, "chat_text" : chat_text, "chat_time" : chat_time})
+        producer.send(topic, msg_json.encode('utf-8'))
         return index()
     finally:
         producer.close()

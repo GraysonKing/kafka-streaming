@@ -4,17 +4,26 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
     <style>
       * {
-        font-family: 'Roboto', sans-serif;
+        font-family: 'Roboto', sans-serif;   
+      }
+      background {
+        color: gray;
+      }
+      body {
+        max-width: 75%;
+        margin: auto;
+      }
+      .chat_input {
+        max-width: 50%;
       }
     </style>
   </head>
   <body>
     <h1>Data Streaming With Docker and Kafka</h1>
     <div id="chat">
-      {% if chat_feed is defined and chat_feed %}
+      {% if chat_feed is not none %}
         {% for chat_block_info in chat_feed %}
-            <p><b> {{ chat_block_info[0] }} </b></p>
-            <p> {{ chat_block_info[1] }}
+            <p><b> {{ chat_block_info[0] }} </b>: {{ chat_block_info[1] }} - <i> {{ chat_block_info[2] }} </i></p>
         {% endfor %}
       {% endif %}
     </div>
