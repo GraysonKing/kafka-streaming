@@ -3,6 +3,8 @@ Using kafka and docker to stream data.
 
 ## Setting up the Docker environment on Digital Ocean (preinstalled with Docker CE)
 
+Create/Access a Digital Ocean server and create a new droplet, selecting the Docker one-click app.
+
 Get your Digital Ocean API key and export it as a variable on the command line:
 
 ```
@@ -17,7 +19,7 @@ Create the nodes:
 	--digitalocean-access-token $DOTOKEN node-$i; done
 ```
 
-Make one of these node the swarm leader, and get the others to join the swarm then run these commands on all of the nodes that are in the swarm:
+Make one of these nodes the swarm leader, and get the others to join the swarm then run these commands on all of the nodes that are in the swarm:
 
 ```
 sudo ufw allow 22/tcp && sudo ufw allow 2376/tcp && sudo ufw allow 2377/tcp && sudo ufw allow 7946/tcp && sudo ufw allow 7946/udp && sudo ufw allow 4789/udp && sudo ufw allow 2181/tcp && sudo ufw allow 2181/udp &&  sudo ufw allow 9092/tcp && sudo ufw allow 9092/udp && sudo ufw allow 8080/tcp && sudo ufw allow 8080/udp && sudo ufw allow 9094/udp && sudo ufw allow 9094/tcp
@@ -55,9 +57,7 @@ Then test the containers, with curl or by opening the page in your browser. By d
 
 ## Setting up on Docker EE
 
-Follow this [guide](https://docs.docker.com/install/linux/docker-ee/ubuntu/#set-up-the-repository), then set up the containers with docker-compose, docker stack, or the UDP
-
-### With docker-compose or docker stack
+Follow this [guide](https://docs.docker.com/install/linux/docker-ee/ubuntu/#set-up-the-repository) to get Docker EE to work, then set up the containers with docker-compose or docker stack
 
 Clone this repository onto your machine:
 
@@ -76,5 +76,3 @@ docker stack:
 ```
 docker stack deploy -c dc.yml kafkastreaming
 ```
-
-### With UDP
